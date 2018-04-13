@@ -1,0 +1,47 @@
+Tema3 APD
+Bucur Ionut-Cristian,333CA
+
+#Protocol(codificare mesaje pe taguri):
+	-0 -> initiere parinti
+	-1 -> filtru sobel
+	-2 -> filtru mean removal
+	-3 -> statistici & end
+
+#Toate nodurile isi citesc din fisier vecinii
+
+#Initializarea parintilor:
+	Fiecare nod trimite catre vecinii sai mesajul initial dupa ce il primeste
+si isi afla parintele,incepand de la root care,neavand parinte are numai copii
+in lista de vecini si implicit doar trimite
+
+#Root(rank 0)
+	-citeste lista de imagini
+	-parseaza fiecare imagine PGM
+	-imparte matricea de pixeli bordata in parti corecte pentru copii sai;
+partile includ linia de deasupra si dedesupt
+	-asteapta raspuns de la copii(ce nu contine marginile de sus si jos)
+	-scrie matricea finala in fisier
+
+#Nod intermediar
+	-primeste de la parinte matricea de pixeli
+	-imparte matricea de pixeli bordata in parti corecte pentru copii sai;
+partile includ linia de deasupra si dedesupt
+	-asteapta raspuns de la copii(ce nu contine marginile de sus si jos)
+	-trimite matricea inapoi la parinte
+
+#Nod frunza
+	-primeste de la parinte matricea de pixeli
+	-aplica filtrul comform tagului pe care s-au primit pixelii
+	-trimite inapoi la parinte noua matrice(ce nu contine marginile de sus si jos)
+
+#Statistica & end:
+	-fiecare nod frunza in momentul prelucrarii unei matrici retine numarul de 
+linii prelucrate
+	Root-ul initializeaza procesul,trimitand catre copii vectorul de statistici,
+fiecare nod in continuare primeste de la parintele sau, trimite la copii,primeste
+raspunsurile pe care le merge-uieste si isi adauga numarul de linii procesate ale sale
+si le trimite inapoi la propriul parinte
+
+$Nodurile intermediare si frunzele sunt implementate sa primeasca orice fel
+de mesaj, verificand de ce tip este in functie de tag si marime(width, matricea etc).
+Acestea ruleaza pana in momentul primirii mesajului de statistica & end
